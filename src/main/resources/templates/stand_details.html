@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stand Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+<!-- Include Header -->
+<th:block th:replace="~{header}"></th:block>
+
+
+<div class="container mt-5">
+    <!-- Header Section -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <h1 class="display-4" th:text="${stand.name}"></h1>
+    </div>
+
+    <!-- Stand Image -->
+    <div class="mb-4">
+        <img th:src="@{'/images/' + ${stand.previewImageUrl}}" alt="Preview Image" class="img-fluid rounded shadow-lg">
+    </div>
+
+    <!-- Stand Description -->
+    <div class="mb-4">
+        <p><strong>Description:</strong></p>
+        <p th:text="${stand.description}" class="lead text-justify"></p>
+    </div>
+
+    <!-- Exhibitor Info -->
+    <div class="mb-4">
+        <p><strong>Exhibitor:</strong> <span th:text="${stand.exhibitor.username}"></span></p>
+    </div>
+
+    <!-- Materials Section -->
+    <div class="mb-4">
+        <h3 class="h5">Available Materials:</h3>
+        <ul class="list-group">
+            <li th:each="material : ${stand.materials}" class="list-group-item">
+                <p th:text="${material.type}"></p>
+                <p th:text="${material.content}"></p>
+            </li>
+        </ul>
+    </div>
+
+    <div class="d-flex align-items-center">
+        <img th:src="@{'/images/icons/email.png'}" alt="Contact Icon" class="mr-2" style="width: 50px; height:auto;">
+        <span class="text-muted" th:text="${stand.contacts}"></span>
+    </div>
+
+
+    <!-- Back Button -->
+    <a href="/" class="btn btn-outline-primary btn-lg mt-3">Back to Home</a>
+</div>
+
+<!-- Bootstrap JS and dependencies (optional if interactive components like dropdowns or modals are used) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

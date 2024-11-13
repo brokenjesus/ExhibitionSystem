@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrokeExhibition</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="/static/icons/exhibition-icon.png">
+</head>
+<body>
+
+<!-- Include Header -->
+<th:block th:replace="~{header}"></th:block>
+
+<div class="container mt-5">
+    <!-- Button Selection for Search Type -->
+    <div class="btn-group" role="group" aria-label="Search Type">
+        <a href="/?searchType=exhibitions" class="btn btn-outline-primary" th:classappend="${searchType == 'exhibitions' ? ' active' : ''}">
+            Exhibitions
+        </a>
+        <a href="/?searchType=stands" class="btn btn-outline-primary" th:classappend="${searchType == 'stands' ? ' active' : ''}">
+            Stands
+        </a>
+    </div>
+
+    <form th:action="@{/}" method="get" class="mt-3">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input type="text" name="query" class="form-control" placeholder="Search..." th:value="${query}">
+                    <input type="hidden" name="searchType" th:value="${searchType}">  <!-- Add this hidden input field -->
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="mt-5">
+        <h3>Results</h3>
+
+        <!-- Display Exhibitions if searchType is 'exhibitions' -->
+        <div th:if="${searchType == 'exhibitions'}">
+            <h4>Exhibitions</h4>
+            <div th:each="exhibition : ${exhibitionsPage}">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <!-- Display preview image for exhibition -->
+                            <a th:href="@{exhibitions/{id}(id=${exhibition.getId()})}">
+                                <img th:src="@{'/images/' + ${exhibition.previewImageUrl}}" class="card-img-top" alt="Exhibition preview image" style="max-height: 200px; object-fit: cover;">
+                                <h5 class="card-title" th:text="${exhibition.title}"></h5>
+                            </a>
+                            <p class="card-text" th:text="${exhibition.description}"></p>
+
+                            <div class="d-flex align-items-center">
+                                <img th:src="@{'/images/icons/calendar.png'}" alt="Calendar Icon" style="width: 20px; height: 20px; margin-right: 5px;">
+                                <span th:text="${#dates.format(exhibition.startDate, 'dd MMM yyyy')} + ' -  ' + ${#dates.format(exhibition.endDate, 'dd MMM yyyy')}"></span>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+        <!-- Display Stands if searchType is 'stands' -->
+        <div th:if="${searchType == 'stands'}">
+            <h4>Stands</h4>
+            <div th:each="stand : ${standsPage}">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <!-- Display preview image for stand -->
+                            <a th:href="@{stands/{id}(id=${stand.getId()})}">
+                                <img th:src="@{'/images/' + ${stand.previewImageUrl}}" class="card-img-top" alt="Stand preview image" style="max-height: 200px; object-fit: cover;">
+                                <h5 class="card-title" th:text="${stand.name}"></h5>
+                            </a>
+                            <p class="card-text" th:text="${stand.description}"></p>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <!-- Previous page link -->
+            <li class="page-item" th:class="${searchType == 'exhibitions' ? exhibitionsPage.hasPrevious() : standsPage.hasPrevious()} ? '' : 'disabled'">
+                <a class="page-link"
+                   th:href="@{'/?searchType=' + ${searchType} + '&page=' + (${searchType == 'exhibitions' ? exhibitionsPage.number - 1 : standsPage.number - 1})}"
+                   aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <!-- Page number links -->
+            <li th:each="i : ${#numbers.sequence(0, searchType == 'exhibitions' ? exhibitionsPage.totalPages - 1 : standsPage.totalPages - 1)}"
+                th:class="${i == (searchType == 'exhibitions' ? exhibitionsPage.number : standsPage.number)} ? 'active' : ''"
+                class="page-item">
+                <a class="page-link"
+                   th:href="@{'/?searchType=' + ${searchType} + '&page=' + ${i}}"
+                   th:text="${i + 1}"></a>
+            </li>
+
+            <!-- Next page link -->
+            <li class="page-item" th:class="${searchType == 'exhibitions' ? exhibitionsPage.hasNext() : standsPage.hasNext()} ? '' : 'disabled'">
+                <a class="page-link"
+                   th:href="@{'/?searchType=' + ${searchType} + '&page=' + (${searchType == 'exhibitions' ? exhibitionsPage.number + 1 : standsPage.number + 1})}"
+                   aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание стенда</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Создание стенда</h2>
+    <form id="createStandForm" th:action="@{/stands/create}" method="POST" enctype="multipart/form-data">
+        <!-- Основные поля формы для стенда -->
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="4" maxlength="10000" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="contacts" class="form-label">Contacts</label>
+            <input type="text" class="form-control" id="contacts" name="contacts" required>
+        </div>
+
+        <!-- Поле для загрузки изображения -->
+        <div class="mb-3">
+            <label for="image" class="form-label">Изображение стенда</label>
+            <input type="file" class="form-control" id="image" name="image" required>
+        </div>
+
+        <!-- Список материалов -->
+        <div id="materialList" class="mb-3"></div>
+
+        <!-- Форма для добавления материала -->
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <label for="materialName" class="form-label">Название материала</label>
+                <input type="text" id="materialName" class="form-control" placeholder="Название материала">
+            </div>
+            <div class="col-md-5">
+                <label for="materialDescription" class="form-label">Описание материала</label>
+                <input type="text" id="materialDescription" class="form-control" placeholder="Описание материала">
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-primary mt-4" onclick="addMaterial()">Добавить материал</button>
+            </div>
+        </div>
+
+        <!-- Скрытые поля для передачи материалов -->
+        <div id="hiddenMaterials" style="display: none;">
+            <!-- Динамически добавляемые скрытые поля будут появляться сюда -->
+        </div>
+
+        <button type="submit" class="btn btn-success">Создать стенд</button>
+    </form>
+</div>
+
+<script>
+    let materialCount = 0;
+
+    // Функция для добавления материала в список
+    function addMaterial() {
+        const materialName = document.getElementById('materialName').value;
+        const materialDescription = document.getElementById('materialDescription').value;
+
+        if (materialName && materialDescription) {
+            const materialContainer = document.createElement('div');
+            materialContainer.classList.add('mb-2');
+            materialContainer.innerHTML = `
+                <p><strong>Материал:</strong> ${materialName} - ${materialDescription}</p>
+                <input type="hidden" name="materialName${materialCount}" value="${materialName}">
+                <input type="hidden" name="materialDescription${materialCount}" value="${materialDescription}">
+            `;
+
+            // Добавляем материал в список
+            document.getElementById('materialList').appendChild(materialContainer);
+
+            // Добавляем скрытые поля для отправки данных
+            const hiddenMaterialsContainer = document.createElement('div');
+            hiddenMaterialsContainer.innerHTML = `
+                <input type="hidden" name="materialName${materialCount}" value="${materialName}">
+                <input type="hidden" name="materialDescription${materialCount}" value="${materialDescription}">
+            `;
+            document.getElementById('hiddenMaterials').appendChild(hiddenMaterialsContainer);
+
+            // Увеличиваем счетчик материалов
+            materialCount++;
+
+            // Очищаем поля ввода для следующего материала
+            document.getElementById('materialName').value = '';
+            document.getElementById('materialDescription').value = '';
+        } else {
+            alert('Пожалуйста, заполните оба поля для материала.');
+        }
+    }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

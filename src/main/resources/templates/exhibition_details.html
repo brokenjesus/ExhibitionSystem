@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibition Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+
+<!-- Include Header -->
+<th:block th:replace="~{header}"></th:block>
+
+
+<div class="container mt-5">
+    <!-- Header Section -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <h1 class="display-4" th:text="${exhibition.title}"></h1>
+        <div class="d-flex align-items-center">
+            <img th:src="@{'/images/icons/calendar.png'}" alt="Calendar Icon" class="mr-2" style="width: 20px; height: 20px;">
+            <span class="text-muted" th:text="${#dates.format(exhibition.startDate, 'dd MMM yyyy')} + ' -  ' + ${#dates.format(exhibition.endDate, 'dd MMM yyyy')}"></span>
+        </div>
+    </div>
+
+    <!-- Exhibition Image -->
+    <div class="mb-4">
+        <img th:src="@{'/images/' + ${exhibition.previewImageUrl}}" alt="Preview Image" class="img-fluid rounded shadow-lg">
+    </div>
+
+    <!-- Organizer Info -->
+    <div class="mb-4">
+        <p><strong>Organizer:</strong> <span th:text="${exhibition.organizer.username}"></span></p>
+    </div>
+
+    <!-- Description Section -->
+    <div class="mb-4">
+        <p><strong>Description:</strong></p>
+        <p th:text="${exhibition.description}" class="lead text-justify"></p>
+    </div>
+
+    <!-- Stands Section -->
+    <div class="mb-4">
+        <h3 class="h5">Presented at stands:</h3>
+        <ul class="list-group">
+            <li th:each="stand : ${exhibition.stands}" class="list-group-item" th:text="${stand.name}"></li>
+        </ul>
+    </div>
+
+</div>
+
+<!-- Bootstrap JS and dependencies (optional if interactive components like dropdowns or modals are used) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
