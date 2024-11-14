@@ -1,72 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Stand</title>
+    <title>Создание стенда</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css">
 </head>
 <body>
 
 <div class="container mt-5">
-    <h2>Create Stand</h2>
+    <h2>Создание стенда</h2>
     <form id="createStandForm" th:action="@{/stands/create}" method="POST" enctype="multipart/form-data">
-        <!-- Main fields for the stand -->
+        <!-- Основные поля формы для стенда -->
         <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
+            <label for="name" class="form-label">Название стенда</label>
             <input type="text" class="form-control" id="name" name="name" required>
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label">Описание</label>
             <textarea class="form-control" id="description" name="description" rows="4" maxlength="10000" required></textarea>
         </div>
         <div class="mb-3">
-            <label for="contacts" class="form-label">Contacts</label>
+            <label for="contacts" class="form-label">Контакты</label>
             <input type="text" class="form-control" id="contacts" name="contacts" required>
         </div>
 
-        <!-- Image upload field -->
+        <!-- Поле для загрузки изображения стенда -->
         <div class="mb-3">
-            <label for="image" class="form-label">Stand Image</label>
+            <label for="image" class="form-label">Изображение стенда</label>
             <input type="file" class="form-control" id="image" name="image" required>
         </div>
 
-        <!-- Materials list -->
-        <div id="materialList" class="mb-3"></div>
+        <!-- Список материалов -->
+        <div id="materialList" class="mb-3">
+            <h5>Материалы</h5>
+        </div>
 
-        <!-- Form to add materials -->
+        <!-- Форма для добавления нового материала -->
         <div class="row mb-3">
-            <div class="col-md-5">
-                <label for="materialName" class="form-label">Material Name</label>
-                <input type="text" id="materialName" class="form-control" placeholder="Material Name">
+            <div class="col-md-4">
+                <label for="materialName" class="form-label">Название материала</label>
+                <input type="text" id="materialName" class="form-control" placeholder="Название материала">
             </div>
-            <div class="col-md-5">
-                <label for="materialDescription" class="form-label">Material Description</label>
-                <input type="text" id="materialDescription" class="form-control" placeholder="Material Description">
+            <div class="col-md-4">
+                <label for="materialDescription" class="form-label">Описание материала</label>
+                <input type="text" id="materialDescription" class="form-control" placeholder="Описание материала">
             </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-primary mt-4" onclick="addMaterial()">Add Material</button>
+            <div class="col-md-3">
+                <label for="materialImage" class="form-label">Изображение материала</label>
+                <input type="file" id="materialImage" class="form-control">
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary mt-4" onclick="addMaterial()">Добавить</button>
             </div>
         </div>
 
-        <!-- Hidden fields to transfer materials -->
+        <!-- Скрытые поля для передачи материалов -->
         <div id="hiddenMaterials" style="display: none;">
-            <!-- Dynamically added hidden fields will appear here -->
+            <!-- Динамически добавляемые скрытые поля будут здесь -->
         </div>
 
-        <button type="submit" class="btn btn-success">Create Stand</button>
+        <button type="submit" class="btn btn-success">Создать стенд</button>
     </form>
 </div>
 
 <script>
     let materialCount = 0;
 
-    // Function to add material to the list
     function addMaterial() {
         const materialName = document.getElementById('materialName').value;
         const materialDescription = document.getElementById('materialDescription').value;
+        const materialImage = document.getElementById('materialImage').files[0];
 
-        if (materialName && materialDescription) {
+        if (materialName && materialDescription && materialImage) {
             const materialContainer = document.createElement('div');
             materialContainer.classList.add('mb-2');
             materialContainer.innerHTML = `
@@ -75,25 +81,27 @@
                 <input type="hidden" name="materialDescription${materialCount}" value="${materialDescription}">
             `;
 
-            // Add material to the list
             document.getElementById('materialList').appendChild(materialContainer);
 
-            // Add hidden fields for data submission
-            const hiddenMaterialsContainer = document.createElement('div');
-            hiddenMaterialsContainer.innerHTML = `
-                <input type="hidden" name="materialName${materialCount}" value="${materialName}">
-                <input type="hidden" name="materialDescription${materialCount}" value="${materialDescription}">
-            `;
-            document.getElementById('hiddenMaterials').appendChild(hiddenMaterialsContainer);
+            // Add hidden file input to hold the image
+            const hiddenMaterialImageInput = document.createElement('input');
+            hiddenMaterialImageInput.type = "file";
+            hiddenMaterialImageInput.name = `materialImage${materialCount}`;
+            hiddenMaterialImageInput.style.display = 'none';
+            document.getElementById('hiddenMaterials').appendChild(hiddenMaterialImageInput);
 
-            // Increment material counter
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(materialImage);
+            hiddenMaterialImageInput.files = dataTransfer.files;
+
             materialCount++;
 
-            // Clear input fields for the next material
+            // Очистка полей
             document.getElementById('materialName').value = '';
             document.getElementById('materialDescription').value = '';
+            document.getElementById('materialImage').value = '';
         } else {
-            alert('Please fill in both fields for the material.');
+            alert('Пожалуйста, заполните все поля для материала.');
         }
     }
 </script>

@@ -1,82 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Stand</title>
+    <title>Редактирование стенда</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Edit Stand</h2>
+    <h2>Редактирование стенда</h2>
     <form id="editStandForm" th:action="@{/stands/{id}/edit(id=${stand.id})}" method="POST" enctype="multipart/form-data">
-        <!-- Main form fields for the stand -->
+        <!-- Основные поля формы для стенда -->
         <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
+            <label for="name" class="form-label">Название стенда</label>
             <input type="text" class="form-control" id="name" name="name" th:value="${stand.name}" required>
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label">Описание</label>
             <textarea class="form-control" id="description" name="description" rows="4" required
                       th:text="${stand.description}"></textarea>
         </div>
         <div class="mb-3">
-            <label for="contacts" class="form-label">Contacts</label>
+            <label for="contacts" class="form-label">Контакты</label>
             <input type="text" class="form-control" id="contacts" name="contacts" th:value="${stand.contacts}" required>
         </div>
         <div class="mb-3">
-            <label for="image" class="form-label">Stand Image (if you need to update)</label>
+            <label for="image" class="form-label">Изображение стенда (для обновления)</label>
             <input type="file" class="form-control" id="image" name="image">
         </div>
 
-        <!-- Existing materials -->
-        <h4>Existing Materials</h4>
+        <!-- Существующие материалы -->
+        <h4>Существующие материалы</h4>
         <div id="existingMaterials" class="mb-3">
             <ul>
                 <li th:each="material : ${stand.materials}">
                     <div>
                         <p>
                             <span th:text="${material.type}"></span>: <span th:text="${material.content}"></span>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="removeMaterialFromList(this)">Remove</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeMaterialFromList(this)">Удалить</button>
                         </p>
                     </div>
                 </li>
             </ul>
         </div>
 
-        <!-- Add new material -->
-        <h4>Add New Material</h4>
+        <!-- Добавить новый материал -->
+        <h4>Добавить новый материал</h4>
         <div class="row mb-3">
-            <div class="col-md-5">
-                <label for="materialName" class="form-label">Material Name</label>
-                <input type="text" id="materialName" class="form-control" placeholder="Material Name">
+            <div class="col-md-4">
+                <label for="materialName" class="form-label">Название материала</label>
+                <input type="text" id="materialName" class="form-control" placeholder="Название материала">
             </div>
-            <div class="col-md-5">
-                <label for="materialDescription" class="form-label">Material Description</label>
-                <input type="text" id="materialDescription" class="form-control" placeholder="Material Description">
+            <div class="col-md-4">
+                <label for="materialDescription" class="form-label">Описание материала</label>
+                <input type="text" id="materialDescription" class="form-control" placeholder="Описание материала">
             </div>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-primary mt-4" onclick="addMaterial()">Add Material</button>
+            <div class="col-md-3">
+                <label for="materialImage" class="form-label">Изображение материала</label>
+                <input type="file" id="materialImage" class="form-control">
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary mt-4" onclick="addMaterial()">Добавить</button>
             </div>
         </div>
 
-        <!-- Hidden fields for passing new materials -->
+        <!-- Скрытые поля для передачи новых материалов -->
         <div id="hiddenMaterials" style="display: none;"></div>
 
-        <button type="submit" class="btn btn-success">Save Changes</button>
+        <button type="submit" class="btn btn-success">Сохранить изменения</button>
     </form>
 </div>
 
 <script>
     let materialCount = 0;
 
-    // Function to add a new material to the list
     function addMaterial() {
         const materialName = document.getElementById('materialName').value;
         const materialDescription = document.getElementById('materialDescription').value;
+        const materialImage = document.getElementById('materialImage').files[0];
 
-        if (materialName && materialDescription) {
-            // Add the new material to hidden fields
+        if (materialName && materialDescription && materialImage) {
+            // Добавляем новый материал в скрытые поля для отправки
             const materialContainer = document.createElement('div');
             materialContainer.classList.add('mb-2');
             materialContainer.innerHTML = `
@@ -86,32 +90,43 @@
             `;
             document.getElementById('hiddenMaterials').appendChild(materialContainer);
 
-            // Add the new material to the displayed list
+            // Добавляем скрытое поле для файла изображения
+            const hiddenMaterialImageInput = document.createElement('input');
+            hiddenMaterialImageInput.type = "file";
+            hiddenMaterialImageInput.name = `materialImage${materialCount}`;
+            hiddenMaterialImageInput.style.display = 'none';
+            document.getElementById('hiddenMaterials').appendChild(hiddenMaterialImageInput);
+
+            // Устанавливаем загруженный файл в скрытый инпут
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(materialImage);
+            hiddenMaterialImageInput.files = dataTransfer.files;
+
+            // Отображаем материал в списке `existingMaterials`
             const existingMaterials = document.getElementById('existingMaterials').querySelector('ul');
             const newMaterialLi = document.createElement('li');
             newMaterialLi.innerHTML = `
                 <p>${materialName}: ${materialDescription}
-                    <button type="button" class="btn btn-danger btn-sm" onclick="removeMaterialFromList(this)">Remove</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeMaterialFromList(this)">Удалить</button>
                 </p>
             `;
             existingMaterials.appendChild(newMaterialLi);
 
-            // Clear input fields
+            // Очищаем поля ввода
             document.getElementById('materialName').value = '';
             document.getElementById('materialDescription').value = '';
+            document.getElementById('materialImage').value = '';
 
             materialCount++;
         } else {
-            alert('Please fill in both material fields.');
+            alert('Пожалуйста, заполните все поля для материала.');
         }
     }
 
-    // Function to remove a material from the list on the page
     function removeMaterialFromList(button) {
-        // Find the parent <li> element of the material and remove it
         const liElement = button.closest('li');
         if (liElement) {
-            liElement.remove(); // Remove the entire <li> block
+            liElement.remove();
         }
     }
 </script>

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
+
 
 @Entity
 @Data
@@ -28,5 +30,14 @@ public class Stand {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Material> materials;
 
-    // updateStand and uploadMaterials can be handled in the service layer
+    // Связь с лайками
+    @OneToMany(mappedBy = "stand", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<StandLikes> likes;
+
+    // Метод для получения количества лайков
+    public int getLikesCount() {
+        return likes.size();
+    }
 }

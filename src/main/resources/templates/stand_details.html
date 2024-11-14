@@ -37,11 +37,12 @@
 
     <!-- Materials Section -->
     <div class="mb-4">
-        <h3 class="h5">Available Materials:</h3>
-        <ul class="list-group">
-            <li th:each="material : ${stand.materials}" class="list-group-item">
+        <h3 class="h5">Exhibits:</h3>
+        <ul class="list-group" style="display: flex; flex-direction: column; align-items: center;">
+            <li th:each="material : ${stand.materials}" class="list-group-item" style="width: 550px;">
                 <p th:text="${material.type}"></p>
                 <p th:text="${material.content}"></p>
+                <img width="500px" height="auto" th:if="${material.getImageUrl()}" th:src="@{'/images/' + ${material.getImageUrl()}}" alt="Preview Image" class="img-fluid rounded shadow-lg">
             </li>
         </ul>
     </div>
@@ -51,6 +52,18 @@
         <span class="text-muted" th:text="${stand.contacts}"></span>
     </div>
 
+    <div class="mb-4">
+        <form th:action="@{/stands/like}" method="get" class="mt-3">
+            <div style="display: flex; flex-direction: row">
+                <h3 class="h5" th:text="${stand.getLikesCount()}">Likes:</h3>
+                <input type="hidden" name="standId" th:value="${stand.getId()}">
+                <input type="hidden" name="username" th:value="${currentUser.getUsername()}">
+                <button type="submit" style="border: none; background: none; margin-top:-10px;" >
+                    <img th:src="@{'/images/icons/like.png'}"  th:type="submit" width="30px">
+                </button>
+            </div>
+        </form>
+    </div>
 
     <!-- Back Button -->
     <a href="/" class="btn btn-outline-primary btn-lg mt-3">Back to Home</a>

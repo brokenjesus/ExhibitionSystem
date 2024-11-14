@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -30,5 +31,13 @@ public class Exhibition {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Stand> stands;
 
-    // createExhibition and manageExhibition can be handled in the service layer
+    // Exclude from `toString` to avoid circular reference
+    @OneToMany(mappedBy = "exhibition", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<ExhibitionsLikes> likes;
+
+    public int getLikesCount() {
+        return likes.size();
+    }
 }

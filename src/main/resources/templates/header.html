@@ -74,10 +74,14 @@
                 <div style="margin-bottom: 10px;">
                     <a th:if="${currentUser.isAdmin()}" class="btn btn-secondary btn-block" th:href="@{/admin/manage-users}">Manage Users</a>
                     <a th:if="${currentUser.isAdmin() || currentUser.isExhibitor()}" class="btn btn-secondary btn-block" th:href="@{/exhibitions/manage}">Manage Exhibitions</a>
-                    <a th:if="${currentUser.isAdmin() || currentUser.isExhibitor()}" class="btn btn-secondary btn-block" th:href="@{/stands/manage}">Manage Stands</a>
+                    <a th:if="${currentUser.isAdmin() || currentUser.isExhibitor()}" class="btn btn-secondary btn-block" th:href="@{/report}">Report</a>
                 </div>
-                <a class="btn btn-primary btn-block" th:href="@{'/manage-profile/edit?username='+${currentUser.username}}">Profile</a>
-                <a class="btn btn-danger btn-block" th:href="@{/logout}">Log Out</a>
+                <a th:if="${currentUser.isAdmin() || currentUser.isExhibitor()}" class="btn btn-secondary btn-block" th:href="@{/stands/manage}">Manage Stands</a>
+                <div style="margin-top: 10px;">
+                    <a class="btn btn-primary btn-block" th:href="@{'/exhibitions/registered-at?username='+${currentUser.username}}">Registered Exhibitions</a>
+                    <a class="btn btn-primary btn-block" th:href="@{'/manage-profile/edit?username='+${currentUser.username}}">Profile</a>
+                    <a class="btn btn-danger btn-block" th:href="@{/logout}">Log Out</a>
+                </div>
             </div>
         </div>
     </div>

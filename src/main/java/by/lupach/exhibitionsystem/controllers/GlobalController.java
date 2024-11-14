@@ -45,7 +45,11 @@ public class GlobalController {
 
             NotificationSubscription notificationSubscription = notificationSubscriptionService
                     .getNotificationSubscriptionByUserId(currentUser.getId())
-                    .orElse(NotificationSubscription.builder().standSubscription(false).exhibitionSubscription(false).user(currentUser).build());
+                    .orElse(NotificationSubscription.builder()
+                            .standSubscription(false)
+                            .exhibitionSubscription(false)
+                            .user(currentUser)
+                            .build());
 
             Optional<List<ViewedNotification>> viewedNotifications = viewedNotificationService.getAllByUserId(currentUser.getId());
 
@@ -54,30 +58,31 @@ public class GlobalController {
             List<Notification> notificationsToShow = new ArrayList<>();
 
             if (notifications.isPresent()) {
-                if (notificationSubscription.isExhibitionSubscription() && notificationSubscription.isStandSubscription()) {
-                    notificationsToShow = notifications.get();
+                List<Notification> allNotifications = notifications.get();
+
+                // Фильтрация уведомлений в зависимости от подписок пользователя
+                if (notificationSubscription.isExhibitionSubscription()) {
+                    notificationsToShow.addAll(
+                            allNotifications.stream()
+                                    .filter(notification -> notification.getType() == Notification.NotificationType.EXHIBITION)
+                                    .toList()
+                    );
                 }
-                if (notificationSubscription.isExhibitionSubscription()){
-                    for (Notification notification : notifications.get()) {
-                        if (notification.getType() == Notification.NotificationType.EXHIBITION){
-                            notificationsToShow.add(notification);
-                        }
-                    }
+                if (notificationSubscription.isStandSubscription()) {
+                    notificationsToShow.addAll(
+                            allNotifications.stream()
+                                    .filter(notification -> notification.getType() == Notification.NotificationType.STAND)
+                                    .toList()
+                    );
                 }
-                if (notificationSubscription.isStandSubscription()){
-                    for (Notification notification : notifications.get()) {
-                        if (notification.getType() == Notification.NotificationType.STAND){
-                            notificationsToShow.add(notification);
-                        }
-                    }
-                }
+
                 model.addAttribute("notifications", notificationsToShow);
 
+                // Проверка на наличие непросмотренных уведомлений
                 if (viewedNotifications.isEmpty()) {
                     hasNewNotification = true;
                 } else {
-                    // Проверяем, есть ли хотя бы одно непросмотренное уведомление
-                    for (Notification notification : notifications.get()) {
+                    for (Notification notification : allNotifications) {
                         boolean isViewed = viewedNotifications.get().stream()
                                 .anyMatch(viewed -> viewed.getNotification().getId().equals(notification.getId()));
 
@@ -92,6 +97,7 @@ public class GlobalController {
             model.addAttribute("newNotification", hasNewNotification);
         }
     }
+
 
 
 }

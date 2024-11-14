@@ -42,11 +42,37 @@
 
     <!-- Stands Section -->
     <div class="mb-4">
-        <h3 class="h5">Presented at stands:</h3>
+        <h3 class="h5">Presented stands:</h3>
         <ul class="list-group">
             <li th:each="stand : ${exhibition.stands}" class="list-group-item" th:text="${stand.name}"></li>
         </ul>
     </div>
+
+    <!-- Register for Exhibition Button -->
+    <form th:action="@{/exhibitions/register-user}" method="post" th:if="${!isMarkedAsVisit}">
+        <input type="hidden" name="exhibitionId" th:value="${exhibition.id}">
+        <button type="submit" class="btn btn-primary mt-3">Register for Exhibition</button>
+    </form>
+
+    <form th:action="@{/exhibitions/unregister-user}" method="post" th:if="${isMarkedAsVisit}">
+        <input type="hidden" name="exhibitionId" th:value="${exhibition.id}">
+        <button type="submit" class="btn btn-primary mt-3">Unregister from Exhibition</button>
+    </form>
+
+
+    <div class="mb-4">
+        <form th:action="@{/exhibitions/like}" method="get" class="mt-3">
+            <div style="display: flex; flex-direction: row">
+                <h3 class="h5" th:text="${exhibition.getLikesCount()}">Likes:</h3>
+                <input type="hidden" name="exhibitionId" th:value="${exhibition.getId()}">
+                <input type="hidden" name="username" th:value="${currentUser.getUsername()}">
+                <button type="submit" style="border: none; background: none; margin-top:-10px;" >
+                    <img th:src="@{'/images/icons/like.png'}"  th:type="submit" width="30px">
+                </button>
+            </div>
+        </form>
+    </div>
+
 
 </div>
 

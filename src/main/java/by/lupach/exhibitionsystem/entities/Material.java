@@ -20,5 +20,6 @@ public class Material {
 
     private String type;
     private String content;
+    private String imageUrl;
     private Date uploadDate;
 }
