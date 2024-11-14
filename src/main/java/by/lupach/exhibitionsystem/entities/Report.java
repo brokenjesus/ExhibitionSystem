@@ -2,6 +2,8 @@ package by.lupach.exhibitionsystem.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.util.Map;
 
 @Entity

@@ -9,13 +9,8 @@ import java.util.Optional;
 
 @Service
 public class ReportService {
-
-    private final ReportRepository reportRepository;
-
     @Autowired
-    public ReportService(ReportRepository reportRepository) {
-        this.reportRepository = reportRepository;
-    }
+    private ReportRepository reportRepository;
 
     public Optional<Report> getReportById(Integer id) {
         return reportRepository.findById(id);
