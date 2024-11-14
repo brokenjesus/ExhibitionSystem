@@ -6,15 +6,82 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/" th:text="'BrokeExhibition'"></a>
-
-        <div class="d-flex">
-            <a href="/profile" class="btn btn-outline-secondary">
-                <img src="/static/icons/profile-icon.png" alt="Profile" width="30" height="30" class="rounded-circle">
+    <div class="container-fluid  d-flex justify-content-between">
+        <div>
+            <!-- Notification Icon -->
+            <a href="#" data-bs-toggle="modal" data-bs-target="#notificationModal">
+                <img th:if="${newNotification == false}" th:src="@{/images/icons/notification_false.png}" height="40px">
+                <img th:if="${newNotification == true}" th:src="@{/images/icons/notification_true.png}" height="40px">
             </a>
+        </div>
+
+        <div>
+            <a class="navbar-brand" href="/" th:text="'BrokeExhibition'"></a>
+        </div>
+
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarNav" style="display: flex; justify-content: flex-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item" style="display: flex; flex-direction: row">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#userMenuModal" th:text="${currentUser.username}">
+                            USER
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
+
+<!-- Modal for Notifications -->
+<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Display message when there are no notifications -->
+                <p th:if="${notifications.size() == 0}" th:text="'You have no notifications yet.'"></p>
+
+                <!-- List of notifications if available -->
+                <ul th:if="${notifications.size() > 0}">
+                    <li th:each="notification : ${notifications}">
+                        <div th:text="${notification.message}">Notification Message</div>
+                        <div th:text="${#dates.format(notification.sendDate, 'yyyy-MM-dd')}">Send Date</div>
+                    </li>
+                </ul>
+
+                <form th:action="@{/notifications/mark-all-as-read}" method="post"  th:if="${notifications.size() != 0}">
+                    <button type="submit" class="btn btn-primary">Mark As Read</button>
+                </form>
+<!--                <a class="btn btn-primary" th:href="@{/notifications/mark-all-as-read}">Manage Notifications</a>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for User Menu -->
+<div class="modal fade" id="userMenuModal" tabindex="-1" aria-labelledby="userMenuModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userMenuModalLabel">User Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 10px;">
+                    <a th:if="${currentUser.isAdmin()}" class="btn btn-secondary btn-block" th:href="@{/admin/manage-users}">Manage Users</a>
+                    <a th:if="${currentUser.isAdmin() || currentUser.isExhibitor()}" class="btn btn-secondary btn-block" th:href="@{/exhibitions/manage}">Manage Exhibitions</a>
+                    <a th:if="${currentUser.isAdmin() || currentUser.isExhibitor()}" class="btn btn-secondary btn-block" th:href="@{/stands/manage}">Manage Stands</a>
+                </div>
+                <a class="btn btn-primary btn-block" th:href="@{'/manage-profile/edit?username='+${currentUser.username}}">Profile</a>
+                <a class="btn btn-danger btn-block" th:href="@{/logout}">Log Out</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

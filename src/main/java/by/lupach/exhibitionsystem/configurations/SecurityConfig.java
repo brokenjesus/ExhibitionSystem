@@ -20,12 +20,11 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/login").permitAll()
-                        .requestMatchers("/admin/manage-users/edit").authenticated()
-                        .requestMatchers("/admin/signup").permitAll()// доступ к регистрации только для админа
-                        .requestMatchers("/admin/**").permitAll()
+                        .requestMatchers("/signup").permitAll()// доступ к регистрации только для админа
+//                        .requestMatchers("/admin/**").permitAll()
 //                        .requestMatchers("/admin/manage-users/edit").authenticated()
 //                        .requestMatchers("/admin/signup").hasRole("ADMIN")// доступ к регистрации только для админа
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

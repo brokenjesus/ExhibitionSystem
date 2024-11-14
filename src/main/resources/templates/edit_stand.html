@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Stand</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Edit Stand</h2>
+    <form id="editStandForm" th:action="@{/stands/{id}/edit(id=${stand.id})}" method="POST" enctype="multipart/form-data">
+        <!-- Main form fields for the stand -->
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" th:value="${stand.name}" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="4" required
+                      th:text="${stand.description}"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="contacts" class="form-label">Contacts</label>
+            <input type="text" class="form-control" id="contacts" name="contacts" th:value="${stand.contacts}" required>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Stand Image (if you need to update)</label>
+            <input type="file" class="form-control" id="image" name="image">
+        </div>
+
+        <!-- Existing materials -->
+        <h4>Existing Materials</h4>
+        <div id="existingMaterials" class="mb-3">
+            <ul>
+                <li th:each="material : ${stand.materials}">
+                    <div>
+                        <p>
+                            <span th:text="${material.type}"></span>: <span th:text="${material.content}"></span>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeMaterialFromList(this)">Remove</button>
+                        </p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Add new material -->
+        <h4>Add New Material</h4>
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <label for="materialName" class="form-label">Material Name</label>
+                <input type="text" id="materialName" class="form-control" placeholder="Material Name">
+            </div>
+            <div class="col-md-5">
+                <label for="materialDescription" class="form-label">Material Description</label>
+                <input type="text" id="materialDescription" class="form-control" placeholder="Material Description">
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-primary mt-4" onclick="addMaterial()">Add Material</button>
+            </div>
+        </div>
+
+        <!-- Hidden fields for passing new materials -->
+        <div id="hiddenMaterials" style="display: none;"></div>
+
+        <button type="submit" class="btn btn-success">Save Changes</button>
+    </form>
+</div>
+
+<script>
+    let materialCount = 0;
+
+    // Function to add a new material to the list
+    function addMaterial() {
+        const materialName = document.getElementById('materialName').value;
+        const materialDescription = document.getElementById('materialDescription').value;
+
+        if (materialName && materialDescription) {
+            // Add the new material to hidden fields
+            const materialContainer = document.createElement('div');
+            materialContainer.classList.add('mb-2');
+            materialContainer.innerHTML = `
+                <p><strong>Material:</strong> ${materialName} - ${materialDescription}</p>
+                <input type="hidden" name="materialName${materialCount}" value="${materialName}">
+                <input type="hidden" name="materialDescription${materialCount}" value="${materialDescription}">
+            `;
+            document.getElementById('hiddenMaterials').appendChild(materialContainer);
+
+            // Add the new material to the displayed list
+            const existingMaterials = document.getElementById('existingMaterials').querySelector('ul');
+            const newMaterialLi = document.createElement('li');
+            newMaterialLi.innerHTML = `
+                <p>${materialName}: ${materialDescription}
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeMaterialFromList(this)">Remove</button>
+                </p>
+            `;
+            existingMaterials.appendChild(newMaterialLi);
+
+            // Clear input fields
+            document.getElementById('materialName').value = '';
+            document.getElementById('materialDescription').value = '';
+
+            materialCount++;
+        } else {
+            alert('Please fill in both material fields.');
+        }
+    }
+
+    // Function to remove a material from the list on the page
+    function removeMaterialFromList(button) {
+        // Find the parent <li> element of the material and remove it
+        const liElement = button.closest('li');
+        if (liElement) {
+            liElement.remove(); // Remove the entire <li> block
+        }
+    }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

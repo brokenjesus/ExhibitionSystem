@@ -5,6 +5,7 @@ import by.lupach.exhibitionsystem.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +20,10 @@ public class NotificationService {
 
     public Optional<Notification> getNotificationById(Integer id) {
         return notificationRepository.findById(id);
+    }
+
+    public Optional<List<Notification>> getAllNotifications() {
+        return Optional.ofNullable(notificationRepository.findAll());
     }
 
     public Notification saveNotification(Notification notification) {

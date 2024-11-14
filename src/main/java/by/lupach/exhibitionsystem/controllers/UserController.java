@@ -1,6 +1,8 @@
 package by.lupach.exhibitionsystem.controllers;
 
+import by.lupach.exhibitionsystem.entities.NotificationSubscription;
 import by.lupach.exhibitionsystem.entities.User;
+import by.lupach.exhibitionsystem.services.NotificationSubscriptionService;
 import by.lupach.exhibitionsystem.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,15 +27,20 @@ public class UserController {
     private UserService userService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private NotificationSubscriptionService notificationSubscriptionService;
 
-    @GetMapping("admin/signup")
+    @GetMapping("signup")
     public String signup() {
         return "signup";
     }
 
-    @PostMapping("admin/signup")
+    @PostMapping("signup")
     public String processSignup(@ModelAttribute("newUser") User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getRole() == User.Role.ROLE_EXHIBITOR){
+            user.setEnabled(false);
+        }
         userService.saveUser(user);
         return "redirect:/admin/manage-users";
     }
@@ -49,10 +56,16 @@ public class UserController {
         return "redirect:/";
     }
 
-    @GetMapping("edit-profile")
-    public String editProfile() {
-        return "edit_profile";
-    }
+//    @GetMapping("edit-profile")
+//    public String editProfile(Model model) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        User currentUser = userService.loadUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
+//
+//        NotificationSubscription notificationSubscription = notificationSubscriptionService.
+//                getNotificationSubscriptionByUserId(currentUser.getId()).orElse(null);
+//        model.addAttribute("notificationSubscription", notificationSubscription);
+//        return "edit_profile";
+//    }
     @GetMapping("admin/manage-users/search")
     public String searchUsers(@RequestParam String username, @RequestParam(defaultValue = "0") int page, Model model) {
         User users = userService.loadUserByUsername(username);
@@ -62,18 +75,33 @@ public class UserController {
 
     @GetMapping("admin/manage-users")
     public String manageUsers(@RequestParam(defaultValue = "0") int page, Model model) {
-        Page<User> usersPage = userService.getAll(page, PAGE_SIZE).get();
-        model.addAttribute("users", usersPage.getContent());
-        return "manage_users";
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.loadUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
+
+
+        if (currentUser.isAdmin()){
+            Page<User> usersPage = userService.getAll(page, PAGE_SIZE).get();
+            model.addAttribute("usersPage", usersPage);
+            return "manage_users";
+        }else{
+            return "redirect:/";
+        }
     }
 
-    @GetMapping("admin/manage-users/delete")
+    @GetMapping("manage-profile/delete")
     public String deleteUser(@RequestParam int id) {
-        userService.deleteById(id);
-        return "manage_users";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.loadUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
+
+
+        if (currentUser.isAdmin() || currentUser.getId() != id){
+            userService.deleteById(id);
+        }
+        return "redirect:admin/manage-users";
     }
 
-    @GetMapping("admin/manage-users/edit")
+    @GetMapping("manage-profile/edit")
     public String editUser(@RequestParam String username, Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.loadUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -85,11 +113,15 @@ public class UserController {
         }
 
         User userToEdit = userService.loadUserByUsername(username);
+
+        NotificationSubscription notificationSubscription = notificationSubscriptionService.
+                getNotificationSubscriptionByUserId(userToEdit.getId()).orElse(new NotificationSubscription());
+        model.addAttribute("notificationSubscription", notificationSubscription);
         model.addAttribute("userToEdit", userToEdit);
         return "edit_profile";
     }
 
-    @PostMapping("admin/manage-users/edit")
+    @PostMapping("manage-profile/edit")
     public String processEditUser(@ModelAttribute("userToEdit") User editedUser) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = userService.loadUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
@@ -112,5 +144,34 @@ public class UserController {
         }else{
             return "redirect:/admin/manage-users";
         }
+    }
+
+    @GetMapping("admin/manage-users/activate")
+    public String processActivateUser(@RequestParam String username) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.loadUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
+
+        if (currentUser.isAdmin()){
+            User userToActivate = userService.loadUserByUsername(username);
+            userToActivate.setEnabled(true);
+            userService.saveUser(userToActivate);
+        }
+
+        return "redirect:/admin/manage-users";
+    }
+
+
+    @GetMapping("admin/manage-users/deactivate")
+    public String processDeactivateUser(@RequestParam String username) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userService.loadUserByUsername(((UserDetails) authentication.getPrincipal()).getUsername());
+
+        if (currentUser.isAdmin()){
+            User userToActivate = userService.loadUserByUsername(username);
+            userToActivate.setEnabled(false);
+            userService.saveUser(userToActivate);
+        }
+
+        return "redirect:/admin/manage-users";
     }
 }

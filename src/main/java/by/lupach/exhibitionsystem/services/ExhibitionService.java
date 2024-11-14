@@ -39,6 +39,10 @@ public class ExhibitionService {
         return Optional.of(exhibitionRepository.getById(id));
     }
 
+    public void deleteById(Integer id) {
+        exhibitionRepository.deleteById(id);
+    }
+
     public void save(Exhibition exhibition) {
         exhibitionRepository.save(exhibition);
     }

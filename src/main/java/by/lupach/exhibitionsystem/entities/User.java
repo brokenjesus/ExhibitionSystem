@@ -40,7 +40,10 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.ROLE_EXHIBITOR;
+    private Role role;
+
+    @Column(nullable = false)
+    private boolean enabled = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -49,6 +52,9 @@ public class User implements UserDetails {
 
     public boolean isAdmin() {
         return this.role == Role.ROLE_ADMIN;
+    }
+    public boolean isExhibitor() {
+        return this.role == Role.ROLE_EXHIBITOR;
     }
 
 
@@ -69,11 +75,11 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     public enum Role {
-        ROLE_EXHIBITOR, ROLE_ADMIN
+        ROLE_EXHIBITOR, ROLE_USER, ROLE_ADMIN
     }
 }
 

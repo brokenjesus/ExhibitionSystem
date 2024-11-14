@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stand Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css">
+</head>
+<body>
+<!-- Include Header -->
+<th:block th:replace="~{header}"></th:block>
+<div class="container mt-5">
+    <h2>Stand Management</h2>
+    <a href="/stands/create" class="btn btn-success mb-3">Create Stand</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Contacts</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="stand : ${stands}">
+            <div th:if="${currentUser.isAdmin() || stand.getExhibitor().getId()==currentUser.getId()}">
+                <td th:text="${stand.name}"></td>
+                <td th:text="${stand.description}"></td>
+                <td th:text="${stand.contacts}"></td>
+                <td>
+                    <a th:href="@{/stands/{id}/edit(id=${stand.id})}" class="btn btn-primary btn-sm">Edit</a>
+                    <form th:action="@{/stands/{id}/delete(id=${stand.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </div>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

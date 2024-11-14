@@ -25,7 +25,7 @@ public class MaterialService {
         return materialRepository.save(material);
     }
 
-    public void deleteMaterial(Integer id) {
+    public void deleteById(Integer id) {
         materialRepository.deleteById(id);
     }
 }

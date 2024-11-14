@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +62,7 @@ public class StandService {
     public void save(Stand stand) {
         // Save materials first, so they are properly persisted
         for (Material material : stand.getMaterials()) {
+            material.setUploadDate(Date.valueOf(LocalDate.now()));
             materialService.saveMaterial(material);
         }
 
@@ -67,8 +70,7 @@ public class StandService {
         standRepository.save(stand);
     }
 
-    // Delete Stand by ID
-    public void delete(Integer id) {
+    public void deleteById(Integer id) {
         standRepository.deleteById(id);
     }
 }

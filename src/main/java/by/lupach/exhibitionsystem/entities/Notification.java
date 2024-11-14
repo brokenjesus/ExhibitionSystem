@@ -1,8 +1,9 @@
 package by.lupach.exhibitionsystem.entities;
 
-import by.lupach.exhibitionsystem.entities.User;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.sql.Date;
 
 @Entity
 @Data
@@ -14,9 +15,14 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    private User user;
-
+    @Column(columnDefinition = "TEXT")
     private String message;
-    private boolean send;
+
+    private NotificationType type;
+
+    private Date sendDate;
+
+    public enum NotificationType {
+        EXHIBITION, STAND
+    }
 }
