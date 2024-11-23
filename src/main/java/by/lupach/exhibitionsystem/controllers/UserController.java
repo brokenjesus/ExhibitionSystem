@@ -66,12 +66,6 @@ public class UserController {
 //        model.addAttribute("notificationSubscription", notificationSubscription);
 //        return "edit_profile";
 //    }
-    @GetMapping("admin/manage-users/search")
-    public String searchUsers(@RequestParam String username, @RequestParam(defaultValue = "0") int page, Model model) {
-        User users = userService.loadUserByUsername(username);
-        model.addAttribute("users", users);
-        return "manage_users";
-    }
 
     @GetMapping("admin/manage-users")
     public String manageUsers(@RequestParam(defaultValue = "0") int page, Model model) {
@@ -88,6 +82,14 @@ public class UserController {
             return "redirect:/";
         }
     }
+
+    @GetMapping("admin/manage-users/search")
+    public String searchUsers(@RequestParam String username, @RequestParam(defaultValue = "0") int page, Model model) {
+        Page<User> usersPage = userService.searchByUsername(username, page, PAGE_SIZE);
+        model.addAttribute("usersPage", usersPage);
+        return "manage_users";
+    }
+
 
     @GetMapping("manage-profile/delete")
     public String deleteUser(@RequestParam int id) {

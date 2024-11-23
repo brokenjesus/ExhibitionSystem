@@ -46,14 +46,24 @@
                 <p th:if="${notifications.size() == 0}" th:text="'You have no notifications yet.'"></p>
 
                 <!-- List of notifications if available -->
-                <ul th:if="${notifications.size() > 0}">
-                    <li th:each="notification : ${notifications}">
-                        <div th:text="${notification.message}">Notification Message</div>
-                        <div th:text="${#dates.format(notification.sendDate, 'yyyy-MM-dd')}">Send Date</div>
+                <!-- List of notifications if available -->
+                <ul th:if="${notifications.size() > 0}" class="list-group list-group-flush">
+                    <li th:each="notification : ${notifications}" class="list-group-item"
+                        th:classappend="${notification.type.name() == 'EXHIBITION' ? ' bg-light' : ''}">
+                        <div>
+                            <div th:text="${notification.message}" class="fw-bold mb-2">Notification Message</div>
+                            <div class="text-muted" th:text="${#dates.format(notification.sendDate, 'yyyy-MM-dd')}">Send Date</div>
+                        </div>
                     </li>
                 </ul>
 
-                <form th:action="@{/notifications/mark-all-as-read}" method="post"  th:if="${notifications.size() != 0}">
+
+
+
+
+
+
+                <form th:action="@{/notifications/mark-all-as-read}" method="post"  th:if="${notifications.size() != 0}" style="margin-top: 20px;">
                     <button type="submit" class="btn btn-primary">Mark As Read</button>
                 </form>
 <!--                <a class="btn btn-primary" th:href="@{/notifications/mark-all-as-read}">Manage Notifications</a>-->
@@ -86,6 +96,6 @@
         </div>
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

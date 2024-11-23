@@ -76,6 +76,12 @@ public class GlobalController {
                     );
                 }
 
+                // Сортировка уведомлений по дате (предполагается, что есть поле `date`)
+                notificationsToShow = notificationsToShow.stream()
+                        .sorted((n1, n2) -> n2.getSendDate().compareTo(n1.getSendDate())) // Сортировка по убыванию даты
+                        .limit(5) // Оставить только 5 последних
+                        .toList();
+
                 model.addAttribute("notifications", notificationsToShow);
 
                 // Проверка на наличие непросмотренных уведомлений
@@ -97,6 +103,7 @@ public class GlobalController {
             model.addAttribute("newNotification", hasNewNotification);
         }
     }
+
 
 
 

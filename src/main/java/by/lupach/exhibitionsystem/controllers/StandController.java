@@ -83,7 +83,7 @@ public class StandController {
 
         Notification notification = Notification.builder()
                 .type(Notification.NotificationType.STAND)
-                .message("Don't miss stand \"" + stand.getName() + "\"")
+                .message("Don't miss stand: \"" + stand.getName() + "\"")
                 .sendDate(Date.valueOf(LocalDate.now()))
                 .build();
         notificationService.saveNotification(notification);

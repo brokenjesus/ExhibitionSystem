@@ -37,7 +37,6 @@
 
 
     <div class="mt-5">
-        <h3>Results</h3>
 
         <!-- Display Exhibitions if searchType is 'exhibitions' -->
         <div th:if="${searchType == 'exhibitions'}">
@@ -47,7 +46,7 @@
                         <div class="card-body">
                             <!-- Display preview image for exhibition -->
                             <a th:href="@{exhibitions/{id}(id=${exhibition.getId()})}">
-                                <img th:src="@{'/images/' + ${exhibition.previewImageUrl}}" class="card-img-top" alt="Exhibition preview image" style="max-height: 200px; object-fit: cover;">
+                                <img th:src="@{'/images/' + ${exhibition.previewImageUrl}}" class="card-img-top" alt="Exhibition preview image" style="max-height: 400px; object-fit: cover;">
                                 <h5 class="card-title" th:text="${exhibition.title}"></h5>
                             </a>
                             <p class="card-text" th:text="${exhibition.description}"></p>
@@ -69,7 +68,7 @@
                         <div class="card-body">
                             <!-- Display preview image for stand -->
                             <a th:href="@{stands/{id}(id=${stand.getId()})}">
-                                <img th:src="@{'/images/' + ${stand.previewImageUrl}}" class="card-img-top" alt="Stand preview image" style="max-height: 200px; object-fit: cover;">
+                                <img th:src="@{'/images/' + ${stand.previewImageUrl}}" class="card-img-top" alt="Stand preview image" style="max-height: 400px; object-fit: cover;">
                                 <h5 class="card-title" th:text="${stand.name}"></h5>
                             </a>
                             <p class="card-text" th:text="${stand.description}"></p>

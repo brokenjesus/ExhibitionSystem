@@ -29,6 +29,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    public Page<User> searchByUsername(String username, int page, int size) {
+        return userRepository.findByUsernameContainingIgnoreCase(username, PageRequest.of(page, size));
+    }
+
+    @Transactional
     public void saveUser(User user) {
         userRepository.save(user);
         logger.info("User saved successfully: {}", user.getUsername());

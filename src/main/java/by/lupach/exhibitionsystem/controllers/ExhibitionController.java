@@ -67,7 +67,7 @@ public class ExhibitionController {
         exhibitionService.save(exhibition);
 
         Notification notification = Notification.builder().type(Notification.NotificationType.EXHIBITION)
-                .message("Dont miss stand +\"" + exhibition.getTitle() + "\" \n" + exhibition.getStartDate()
+                .message("Dont miss Exhibition: \"" + exhibition.getTitle() + "\" \n" + exhibition.getStartDate()
                         + " - " + exhibition.getEndDate() + "\n Organizer: " + exhibition.getOrganizer().getName()).sendDate(Date.valueOf(LocalDate.now())).build();
         notificationService.saveNotification(notification);
         return "redirect:/";
