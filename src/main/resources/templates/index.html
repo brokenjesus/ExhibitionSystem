@@ -78,9 +78,9 @@
         </div>
     </div>
 
-    <nav aria-label="Page navigation">
+    <nav aria-label="Page navigation" th:if="${searchType == 'exhibitions' ? exhibitionsPage.totalPages > 0 : standsPage.totalPages > 0}">
         <ul class="pagination justify-content-center">
-            <!-- Previous page link -->
+            <!-- Проверка на доступность предыдущей страницы -->
             <li class="page-item" th:class="${searchType == 'exhibitions' ? exhibitionsPage.hasPrevious() : standsPage.hasPrevious()} ? '' : 'disabled'">
                 <a class="page-link"
                    th:href="@{'/?searchType=' + ${searchType} + '&page=' + (${searchType == 'exhibitions' ? exhibitionsPage.number - 1 : standsPage.number - 1})}"
@@ -89,8 +89,9 @@
                 </a>
             </li>
 
-            <!-- Page number links -->
-            <li th:each="i : ${#numbers.sequence(0, searchType == 'exhibitions' ? exhibitionsPage.totalPages - 1 : standsPage.totalPages - 1)}"
+            <!-- Пагинация, если есть страницы -->
+            <li th:if="${searchType == 'exhibitions' ? exhibitionsPage.totalPages > 0 : standsPage.totalPages > 0}"
+                th:each="i : ${#numbers.sequence(0, searchType == 'exhibitions' ? exhibitionsPage.totalPages - 1 : standsPage.totalPages - 1)}"
                 th:class="${i == (searchType == 'exhibitions' ? exhibitionsPage.number : standsPage.number)} ? 'active' : ''"
                 class="page-item">
                 <a class="page-link"
@@ -98,7 +99,7 @@
                    th:text="${i + 1}"></a>
             </li>
 
-            <!-- Next page link -->
+            <!-- Проверка на доступность следующей страницы -->
             <li class="page-item" th:class="${searchType == 'exhibitions' ? exhibitionsPage.hasNext() : standsPage.hasNext()} ? '' : 'disabled'">
                 <a class="page-link"
                    th:href="@{'/?searchType=' + ${searchType} + '&page=' + (${searchType == 'exhibitions' ? exhibitionsPage.number + 1 : standsPage.number + 1})}"

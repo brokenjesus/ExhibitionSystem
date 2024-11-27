@@ -25,6 +25,16 @@ public class SecurityConfig {
 //                        .requestMatchers("/admin/manage-users/edit").authenticated()
 //                        .requestMatchers("/admin/signup").hasRole("ADMIN")// доступ к регистрации только для админа
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/exhibitions/create").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/exhibitions/edit/**").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/exhibitions/delete/**").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/exhibitions/manage").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/stands/create").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/stands/edit/**").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/stands/delete/**").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/stands/manage").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/report").hasAnyRole("ADMIN", "EXHIBITOR")
+                        .requestMatchers("/stands/create").hasAnyRole("ADMIN", "EXHIBITOR")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

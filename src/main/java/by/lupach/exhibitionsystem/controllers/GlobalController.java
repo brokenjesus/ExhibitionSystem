@@ -85,14 +85,14 @@ public class GlobalController {
                 model.addAttribute("notifications", notificationsToShow);
 
                 // Проверка на наличие непросмотренных уведомлений
-                if (viewedNotifications.isEmpty()) {
+                if (viewedNotifications.isEmpty() && (notificationSubscription.isExhibitionSubscription() || notificationSubscription.isStandSubscription())) {
                     hasNewNotification = true;
                 } else {
                     for (Notification notification : allNotifications) {
                         boolean isViewed = viewedNotifications.get().stream()
                                 .anyMatch(viewed -> viewed.getNotification().getId().equals(notification.getId()));
 
-                        if (!isViewed) {
+                        if (!isViewed  && (notificationSubscription.isExhibitionSubscription() || notificationSubscription.isStandSubscription())) {
                             hasNewNotification = true;
                             break;
                         }
